@@ -16,6 +16,9 @@ import { Album, AlbumDocument } from '../schemas/album.schema';
 import { NotFoundError } from 'rxjs';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateAlbumDto } from './create.album.dto';
+import { extname } from 'path';
+import { diskStorage } from 'multer';
+import * as crypto from 'node:crypto';
 
 @Controller('albums')
 export class AlbumsController {
@@ -46,7 +49,16 @@ export class AlbumsController {
 
   @Post()
   @UseInterceptors(
-    FileInterceptor('image', { dest: './public/uploads/albums' }),
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './public/uploads/albums',
+        filename: (_req, file, callback) => {
+          const ex = extname(file.originalname);
+          const fileName = crypto.randomUUID();
+          callback(null, fileName + ex);
+        },
+      }),
+    }),
   )
   async create(
     @UploadedFile() file: Express.Multer.File,
@@ -54,6 +66,7 @@ export class AlbumsController {
   ) {
     const artist = await this.artistModel.findById(albumDto.artist);
     if (!artist) throw new NotFoundError('Artist not found');
+
     const newAlbum = new this.albumModel({
       artist: albumDto.artist,
       title: albumDto.title,

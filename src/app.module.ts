@@ -8,6 +8,7 @@ import { AlbumsController } from './albums/albums.controller';
 import { Album, AlbumSchema } from './schemas/album.schema';
 import { TracksController } from './tracks/tracks.controller';
 import { Track, TrackSchema } from './schemas/track.schema';
+import { SeedService } from './seed/seed.service';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { Track, TrackSchema } from './schemas/track.schema';
     AlbumsController,
     TracksController,
   ],
-  providers: [AppService],
+  providers: [AppService, SeedService],
+  exports: [SeedService],
 })
 export class AppModule {}

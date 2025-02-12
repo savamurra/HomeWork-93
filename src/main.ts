@@ -8,4 +8,4 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'public'));
   await app.listen(process.env.PORT ?? 8000);
 }
-bootstrap()
+bootstrap();
