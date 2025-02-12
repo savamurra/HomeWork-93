@@ -10,9 +10,9 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Artist } from '../schemas/artist.schema';
+import { Artist, ArtistDocument } from '../schemas/artist.schema';
 import { Model } from 'mongoose';
-import { Album } from '../schemas/album.schema';
+import { Album, AlbumDocument } from '../schemas/album.schema';
 import { NotFoundError } from 'rxjs';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateAlbumDto } from './create.album.dto';
@@ -20,8 +20,8 @@ import { CreateAlbumDto } from './create.album.dto';
 @Controller('albums')
 export class AlbumsController {
   constructor(
-    @InjectModel(Artist.name) private artistModel: Model<Artist>,
-    @InjectModel(Album.name) private albumModel: Model<Album>,
+    @InjectModel(Artist.name) private artistModel: Model<ArtistDocument>,
+    @InjectModel(Album.name) private albumModel: Model<AlbumDocument>,
   ) {}
 
   @Get()
@@ -29,17 +29,18 @@ export class AlbumsController {
     return this.albumModel.find();
   }
 
+  @Get('findByArtist')
+  async getTrackWithAlbum(@Query('artist') artistId: string) {
+    const album = await this.albumModel.find({ artist: artistId });
+    if (!album)
+      throw new NotFoundError(`Album with artist id ${artistId} not found`);
+    return album;
+  }
+
   @Get(':id')
   async getAlbumById(@Param('id') id: string) {
     const album = await this.albumModel.findById(id);
     if (!album) throw new NotFoundError(`Album with id ${id} not found`);
-    return album;
-  }
-
-  @Get('findByQuery')
-  async getAlbumWithArtist(@Query('id') id: string) {
-    const album = await this.albumModel.find({ artist: id });
-    if (!album) throw new NotFoundError(`Album with artist id ${id} not found`);
     return album;
   }
 
