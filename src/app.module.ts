@@ -9,6 +9,9 @@ import { Album, AlbumSchema } from './schemas/album.schema';
 import { TracksController } from './tracks/tracks.controller';
 import { Track, TrackSchema } from './schemas/track.schema';
 import { SeedService } from './seed/seed.service';
+import { UsersController } from './users/users.controller';
+import { AuthService } from './auth/auth.service';
+import { User, UserSchema } from './schemas/user.schema';
 
 @Module({
   imports: [
@@ -17,6 +20,7 @@ import { SeedService } from './seed/seed.service';
       { name: Artist.name, schema: ArtistSchema },
       { name: Album.name, schema: AlbumSchema },
       { name: Track.name, schema: TrackSchema },
+      { name: User.name, schema: UserSchema },
     ]),
   ],
   controllers: [
@@ -24,8 +28,9 @@ import { SeedService } from './seed/seed.service';
     ArtistsController,
     AlbumsController,
     TracksController,
+    UsersController,
   ],
-  providers: [AppService, SeedService],
+  providers: [AppService, SeedService, AuthService],
   exports: [SeedService],
 })
 export class AppModule {}

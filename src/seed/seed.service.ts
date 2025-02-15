@@ -4,6 +4,8 @@ import { Model } from 'mongoose';
 import { Artist, ArtistDocument } from '../schemas/artist.schema';
 import { Album, AlbumDocument } from '../schemas/album.schema';
 import { Track, TrackDocument } from '../schemas/track.schema';
+import { User, UserDocument } from '../schemas/user.schema';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class SeedService {
@@ -11,12 +13,14 @@ export class SeedService {
     @InjectModel(Artist.name) private artistModel: Model<ArtistDocument>,
     @InjectModel(Album.name) private albumModel: Model<AlbumDocument>,
     @InjectModel(Track.name) private trackModel: Model<TrackDocument>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
 
   async seed() {
     await this.artistModel.deleteMany({});
     await this.albumModel.deleteMany({});
     await this.trackModel.deleteMany({});
+    await this.userModel.deleteMany({});
 
     const [firstArtist, secondArtist] = await this.artistModel.insertMany([
       {
@@ -60,6 +64,20 @@ export class SeedService {
         title: 'Sakamoto',
         album: secondAlbum._id,
         duration: 3.0,
+      },
+    ]);
+    await this.userModel.insertMany([
+      {
+        email: 'kama@gmail.com',
+        password: '123',
+        token: randomUUID(),
+        displayName: 'Kama',
+      },
+      {
+        email: 'mirana@gmail.com',
+        password: '123',
+        token: randomUUID(),
+        displayName: 'Mirana',
       },
     ]);
   }
