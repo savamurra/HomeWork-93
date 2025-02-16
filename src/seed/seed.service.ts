@@ -72,12 +72,14 @@ export class SeedService {
         password: '123',
         token: randomUUID(),
         displayName: 'Kama',
+        role: 'admin',
       },
       {
         email: 'mirana@gmail.com',
         password: '123',
         token: randomUUID(),
         displayName: 'Mirana',
+        role: 'user',
       },
     );
   }
