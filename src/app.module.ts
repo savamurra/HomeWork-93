@@ -12,6 +12,7 @@ import { SeedService } from './seed/seed.service';
 import { UsersController } from './users/users.controller';
 import { AuthService } from './auth/auth.service';
 import { User, UserSchema } from './schemas/user.schema';
+import { LocalStrategy } from './local.strategy';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { User, UserSchema } from './schemas/user.schema';
     TracksController,
     UsersController,
   ],
-  providers: [AppService, SeedService, AuthService],
+  providers: [AppService, SeedService, AuthService, LocalStrategy],
   exports: [SeedService],
 })
 export class AppModule {}

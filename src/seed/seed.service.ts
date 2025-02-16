@@ -66,7 +66,7 @@ export class SeedService {
         duration: 3.0,
       },
     ]);
-    await this.userModel.insertMany([
+    await this.userModel.create(
       {
         email: 'kama@gmail.com',
         password: '123',
@@ -79,6 +79,6 @@ export class SeedService {
         token: randomUUID(),
         displayName: 'Mirana',
       },
-    ]);
+    );
   }
 }
