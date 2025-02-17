@@ -3,9 +3,11 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -13,6 +15,9 @@ import { Album, AlbumDocument } from '../schemas/album.schema';
 import { NotFoundError } from 'rxjs';
 import { Track, TrackDocument } from '../schemas/track.schema';
 import { CreateTrackDto } from './create.track.dto';
+import { TokenAuthGuard } from '../token-auth/token-auth.guard';
+import { RolesGuard } from '../token-auth/token.role.guard';
+import { Roles } from '../roles/roles.decorator';
 
 @Controller('tracks')
 export class TracksController {
@@ -34,6 +39,7 @@ export class TracksController {
     return track;
   }
 
+  @UseGuards(TokenAuthGuard)
   @Post()
   async create(@Body() trackDto: CreateTrackDto) {
     const album = await this.albumModel.findById(trackDto.album);
@@ -47,9 +53,14 @@ export class TracksController {
     return await newTrack.save();
   }
 
+  @UseGuards(TokenAuthGuard, RolesGuard)
+  @Roles('admin')
   @Delete(':id')
   async delete(@Param('id') id: string) {
-    await this.trackModel.findByIdAndDelete(id);
-    return { message: 'Track deleted successfully.' };
+    const track = await this.trackModel.findByIdAndDelete(id);
+    if (!track) {
+      throw new NotFoundException('Track not found');
+    }
+    return { message: 'Track deleted successfully.', track };
   }
 }

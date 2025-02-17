@@ -26,11 +26,6 @@ export class TokenAuthGuard implements CanActivate {
     if (!user) {
       throw new UnauthorizedException('Invalid token');
     }
-
-    if (user.role !== 'admin') {
-      throw new UnauthorizedException('Invalid role');
-    }
-
     req.user = user;
     return true;
   }
